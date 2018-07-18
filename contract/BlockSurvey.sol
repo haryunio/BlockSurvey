@@ -1,4 +1,5 @@
 pragma solidity ^0.4.23;
+pragma experimental ABIEncoderV2;
 
 contract BlockSurvey{
  
@@ -12,7 +13,7 @@ contract BlockSurvey{
     }
     struct AnswerSheet{           //설문에 대한 답변 모음
         uint256 sheetID;
-        userData userdata;
+        UserData userdata;
         mapping (uint256 => Answer) answers;
     }
 
@@ -21,7 +22,7 @@ contract BlockSurvey{
     ////////Question Part////////////////////////
     /////////////////////////////////////////////
 
-    struct descQuestion{          //서술형 질문
+    /*struct descQuestion{          //서술형 질문
         bool isCreated;
         uint8 questionIndex;
         string question;
@@ -31,11 +32,19 @@ contract BlockSurvey{
         uint8 questionIndex;
         string question;
         string[] choices;
+    }*/
+
+    struct Question{               // 질문
+        uint8 questionType;         // 선택형 = 1, 체크형 = 2, 서술형 = 3
+        string questionContent;
+        string[] choices;
     }
-    struct questionSheet{         //질문지
-        uint8 questionCount;
-        mapping (uint256 => descQuestion) descQuestions;
-        mapping (uint256 => choiceQuestion) choiceQuestions;
+    struct QuestionSheet{         //질문지
+        uint256 questionCount;
+        Question[] questionList;
+        //mapping (uint256 => Question) questionList;
+        //mapping (uint256 => descQuestion) descQuestions;
+        //mapping (uint256 => choiceQuestion) choiceQuestions;
     }
 
     /////////////////////////////////////////////
@@ -83,14 +92,42 @@ contract BlockSurvey{
         pollCount = 0;
     }
 
-    function createPoll(uint256 questionCount, uint256 timeLimit) public payable returns(uint256 pollID) {
-        pollList[pollCount] = Poll(msg.sender, questionCount, )
+    function createPoll(
+        uint256 answerLimit, 
+        uint256 timeLimit, 
+        uint256 questionCount, 
+        uint8[] questionType, 
+        string[] questionContent, 
+        string[][] choices
+        ) public payable returns(uint256 pollID) {
+        Question[] storage tempQuestion;
+        for(uint256 i = 0; i<questionCount; i++){
+            tempQuestion.push(Question(questionType[i], questionContent[i], choices[i]));
+        }
+        //uestionSheet tempQuestionSheet = QuestionSheet(questionCount, tempQuestion);
+        pollList[pollCount] = Poll(msg.sender, pollCount, answerLimit, block.timestamp, timeLimit, QuestionSheet(questionCount, tempQuestion));
     }
 
     function joinPoll(uint256 pollID) public payable returns(uint256 receipt){
         uint256 tmp = pollID;
         tmp++;
         receipt = 1;
+    }
+
+    function getPoll(uint256 pollID) public view returns(
+        address creator,
+        uint256 answerLimit,
+        uint256 starttime,
+        uint256 timelimit,
+
+        QuestionSheet questionSheet
+        //AnswerSheet[] answerSheet
+    ){
+        creator = pollList[pollID].creator;
+        answerLimit = pollList[pollID].answerLimit;
+        starttime = pollList[pollID].starttime;
+        timelimit = pollList[pollID].timelimit;
+        questionSheet = pollList[pollID].questionSheet;
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
