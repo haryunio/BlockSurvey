@@ -22,29 +22,10 @@ contract BlockSurvey{
     ////////Question Part////////////////////////
     /////////////////////////////////////////////
 
-    /*struct descQuestion{          //서술형 질문
-        bool isCreated;
-        uint8 questionIndex;
-        string question;
-    }
-    struct choiceQuestion{        //선택형 질문
-        bool isCreated;
-        uint8 questionIndex;
-        string question;
-        string[] choices;
-    }*/
-
     struct Question{               // 질문
         uint8 questionType;         // 선택형 = 1, 체크형 = 2, 서술형 = 3
         string questionContent;
         string[] choices;
-    }
-    struct QuestionSheet{         //질문지
-        uint256 questionCount;
-        Question[] questionList;
-        //mapping (uint256 => Question) questionList;
-        //mapping (uint256 => descQuestion) descQuestions;
-        //mapping (uint256 => choiceQuestion) choiceQuestions;
     }
 
     /////////////////////////////////////////////
@@ -55,13 +36,14 @@ contract BlockSurvey{
         address creator;
         uint256 pollID;
 
-        uint256 answerLimit;
-
         uint256 starttime;
         uint256 timelimit;
 
-        QuestionSheet questionSheet;
-        mapping (uint256 => AnswerSheet) answerSheet;
+        uint256 answerLimit;
+        uint256 questionCount;
+
+        mapping (uint8 => Question) questionSheet;
+        mapping (uint8 => AnswerSheet) answerSheet;
     }
 
     /////////////////////////////////////////////
@@ -78,7 +60,8 @@ contract BlockSurvey{
     ////////Mapping Part/////////////////////////
     /////////////////////////////////////////////
 
-    mapping (uint256 => Poll) private pollList;     //모든 설문조사 목록
+    //mapping (uint256 => Poll) private pollList;     //모든 설문조사 목록
+    Poll[] pollList;
     mapping (address => UserData) private userData; //내부 처리용 사용자 정보
 
 
@@ -97,15 +80,14 @@ contract BlockSurvey{
         uint256 timeLimit, 
         uint256 questionCount, 
         uint8[] questionType, 
-        string[] questionContent, 
+        string[] questionContent,
         string[][] choices
         ) public payable returns(uint256 pollID) {
-        Question[] storage tempQuestion;
+        Question[] tempQuestion;
         for(uint256 i = 0; i<questionCount; i++){
             tempQuestion.push(Question(questionType[i], questionContent[i], choices[i]));
         }
-        //uestionSheet tempQuestionSheet = QuestionSheet(questionCount, tempQuestion);
-        pollList[pollCount] = Poll(msg.sender, pollCount, answerLimit, block.timestamp, timeLimit, QuestionSheet(questionCount, tempQuestion));
+        pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, questionCount));
     }
 
     function joinPoll(uint256 pollID) public payable returns(uint256 receipt){
@@ -116,23 +98,22 @@ contract BlockSurvey{
 
     function getPoll(uint256 pollID) public view returns(
         address creator,
-        uint256 answerLimit,
         uint256 starttime,
         uint256 timelimit,
-
-        QuestionSheet questionSheet
+        uint256 answerLimit,
+        uint256 questionCount
+        //Question questionSheet
         //AnswerSheet[] answerSheet
     ){
         creator = pollList[pollID].creator;
-        answerLimit = pollList[pollID].answerLimit;
         starttime = pollList[pollID].starttime;
         timelimit = pollList[pollID].timelimit;
-        questionSheet = pollList[pollID].questionSheet;
+        answerLimit = pollList[pollID].answerLimit;
+        questionCount = pollList[pollID].questionCount;
+        //questionSheet = pollList[pollID].questionSheet;
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
-
-
         result = true;
     }
 
