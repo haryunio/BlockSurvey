@@ -32,7 +32,7 @@ contract BlockSurvey{
     ////////Poll Part////////////////////////////
     /////////////////////////////////////////////
 
-    struct Poll{                  //설문
+    struct Poll{                  //설문(Poll 작업분)
         address creator;
         uint256 pollID;
 
@@ -115,6 +115,7 @@ contract BlockSurvey{
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
         //answerrsheet-related function
+        address sender = msg.sender;
         result = true;
     }
 
