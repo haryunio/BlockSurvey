@@ -114,6 +114,7 @@ contract BlockSurvey{
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
+        //answerrsheet-related function
         result = true;
     }
 
