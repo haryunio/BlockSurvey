@@ -2,37 +2,27 @@ pragma solidity ^0.4.23;
 pragma experimental ABIEncoderV2;
 
 contract BlockSurvey{
- 
-    /////////////////////////////////////////////
-    ////////Answer Part//////////////////////////
-    /////////////////////////////////////////////
-    
-    struct Answer{                //개별 질문에 대한 답변
+
+    // Answer Part
+    struct Answer{                // 개별 질문에 대한 답변
         uint8 answerIndex;
         string answerData;
     }
-    struct AnswerSheet{           //설문에 대한 답변 모음
+    struct AnswerSheet{           // 설문에 대한 답변 모음
         uint256 sheetID;
         UserData userdata;
         mapping (uint256 => Answer) answers;
     }
 
-
-    /////////////////////////////////////////////
-    ////////Question Part////////////////////////
-    /////////////////////////////////////////////
-
-    struct Question{               // 질문
+    //v Question Part
+    struct Question{               //  질문
         uint8 questionType;         // 선택형 = 1, 체크형 = 2, 서술형 = 3
         string questionContent;
         string[] choices;
     }
 
-    /////////////////////////////////////////////
-    ////////Poll Part////////////////////////////
-    /////////////////////////////////////////////
-
-    struct Poll{                  //설문(Poll 작업분)
+    // Poll Part
+    struct Poll{                  // 설문(Poll 작업분)
         address creator;
         uint256 pollID;
         uint256 starttime;
@@ -49,18 +39,18 @@ contract BlockSurvey{
     /////////////////////////////////////////////
 
     struct UserData{
-        address userAddress;   //사용자 지갑 주소
-        uint256 userID;        //내부 처리용 ID, 보안성과 익명성 강화용
-        uint256 userScore;     //사용자 평점 (잘못된 응답 등 피드백)
+        address userAddress;   // 사용자 지갑 주소
+        uint256 userID;        // 내부 처리용 ID, 보안성과 익명성 강화용
+        uint256 userScore;     // 사용자 평점 (잘못된 응답 등 피드백)
     }
 
     /////////////////////////////////////////////
     ////////Mapping Part/////////////////////////
     /////////////////////////////////////////////
 
-    //mapping (uint256 => Poll) private pollList;     //모든 설문조사 목록
+    //mapping (uint256 => Poll) private pollList;     // 모든 설문조사 목록
     Poll[] pollList;
-    mapping (address => UserData) private userData; //내부 처리용 사용자 정보
+    mapping (address => UserData) private userData; //   내부 처리용 사용자 정보
 
     /////////////////////////////////////////////
     ////////Main Logic Part//////////////////////
