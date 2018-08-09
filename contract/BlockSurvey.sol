@@ -35,10 +35,8 @@ contract BlockSurvey{
     struct Poll{                  //설문(Poll 작업분)
         address creator;
         uint256 pollID;
-
         uint256 starttime;
         uint256 timelimit;
-
         uint256 answerLimit;
         uint256 questionCount;
 
@@ -63,7 +61,6 @@ contract BlockSurvey{
     //mapping (uint256 => Poll) private pollList;     //모든 설문조사 목록
     Poll[] pollList;
     mapping (address => UserData) private userData; //내부 처리용 사용자 정보
-
 
     /////////////////////////////////////////////
     ////////Main Logic Part//////////////////////
@@ -114,7 +111,7 @@ contract BlockSurvey{
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
-        //answerrsheet-related function
+        //answersheet-related function
         address sender = msg.sender;
         result = true;
     }
