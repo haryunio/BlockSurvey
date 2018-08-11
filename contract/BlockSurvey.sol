@@ -15,7 +15,7 @@ contract BlockSurvey{
     }
 
     // Question Part
-    struct Question{                //  질문
+    struct Question{                // 질문(Question)
         uint8 questionType;         // 선택형 = 1, 체크형 = 2, 서술형 = 3
         string questionContent;
         string[] choices;
