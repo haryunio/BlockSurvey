@@ -43,10 +43,9 @@ contract BlockSurvey{
     }
 
     // Mapping Part
-
     // mapping (uint256 => Poll) private pollList;  // 모든 설문조사 목록
     Poll[] pollList;
-    mapping (address => UserData) private userData; //   내부 처리용 사용자 정보
+    mapping (address => UserData) private userData; // 내부 처리용 사용자 정보
     
     
     // Main Logic Part
@@ -95,9 +94,8 @@ contract BlockSurvey{
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
-        //answersheet-related function
+        // answersheet-related functions
         address sender = msg.sender;
         result = true;
     }
-
 }
