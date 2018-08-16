@@ -15,11 +15,7 @@ contract BlockSurvey{
     }
 
     // Question Part
-<<<<<<< HEAD
     struct Question{                // 질문
-=======
-    struct Question{                // 질문(Question)
->>>>>>> 8ddaafcbed08dd19e49d0e797a16ca797bdbf97c
         uint8 questionType;         // 선택형 = 1, 체크형 = 2, 서술형 = 3
         string questionContent;
         string[] choices;
@@ -46,17 +42,9 @@ contract BlockSurvey{
         uint256 userScore;     // 사용자 평점 (잘못된 응답 등 피드백)
     }
 
-<<<<<<< HEAD
     // mapping (uint256 => Poll) private pollList;  // 모든 설문조사 목록
     Poll[] pollList;
     mapping (address => UserData) private userData; // 내부 처리용 사용자 정보
-=======
-    // Mapping Part
-    // mapping (uint256 => Poll) private pollList;  // 모든 설문조사 목록
-    Poll[] pollList;
-    mapping (address => UserData) private userData; // 내부 처리용 사용자 정보
-    
->>>>>>> 8ddaafcbed08dd19e49d0e797a16ca797bdbf97c
     
     // Main Logic Part
     uint256 private pollCount;
