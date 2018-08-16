@@ -39,7 +39,7 @@ contract SurveyToken {
         symbol = tokenSymbol;                               // Set the symbol for display purposes
     }
 
-    /**
+    /** 
      * Internal transfer, only can be called by this contract
      */
     function _transfer(address _from, address _to, uint _value) internal {
