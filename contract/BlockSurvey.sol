@@ -88,14 +88,10 @@ contract BlockSurvey{
         }
     }
 
-    function getQuestions(uint256 pollID) public view returns(
-        string[] questions
+    function getQuestions(uint256 pollID, uint8 questionNumber) public view returns(
+        string question
     ){
-        string[] tmpQuestions;
-        for(uint8 i = 0; i < pollList[pollID].questionCount; i++){
-            tmpQuestions.push(pollList[pollID].questionSheet[i]);
-        }
-        questions = tmpQuestions;
+        question = pollList[pollID].questionSheet[questionNumber];
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
