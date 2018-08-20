@@ -53,8 +53,10 @@ contract BlockSurvey{
         pollCount = 0;
     }
 
+    // to-do: solidity fix needed to fix all of the struct-type sources.
+
     function createPoll(
-        uint256 answerLimit, 
+        uint256 answerLimit,
         uint256 timeLimit, 
         uint256 questionCount, 
         uint8[] questionType, 
