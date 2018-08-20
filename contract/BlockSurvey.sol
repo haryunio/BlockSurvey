@@ -82,7 +82,7 @@ contract BlockSurvey{
         pollList[pollID].questionCount = questionCount;
 
         for(uint8 i = 0; i < questionCount; i++){
-            pollList[pollID].questionSheet[i][i] = questionContent[i];
+            pollList[pollID].questionSheet[i][i] = questionContent[i];  //fixing these...
         }
 
         isSuccessed = true;
