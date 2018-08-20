@@ -17,9 +17,10 @@ contract BlockSurvey{
         uint256 timelimit;
         uint256 answerLimit;
         uint256 questionCount;
+        uint256 answerCount;      // 답변 개수
 
-        mapping (uint8 => string) questionSheet;                  // String 기반 단일 Mapping으로 질문 json 저장하기
-        mapping (uint8 => mapping (uint8 => Answer)) answerSheet; // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, 다시 uint8로 개별 응답 정보 찾아내기
+        mapping (uint8 => string[]) questionSheet;                  // String 기반 단일 Mapping으로 질문 json 저장하기
+        mapping (uint8 => mapping (uint8 => string[])) answerSheet; // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, 다시 uint8로 개별 응답 정보 찾아내기
     }
 
     // User Part
@@ -43,11 +44,8 @@ contract BlockSurvey{
 
     // to-do: solidity fix needed to fix all of the struct-type sources.
 
-    function createPoll(
-        uint256 answerLimit,
-        uint256 timeLimit
-        ) public payable returns(uint256 pollID) {
-        pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, 0));
+    function createPoll(uint256 answerLimit, uint256 timeLimit) public payable returns(uint256 pollID) {
+        pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, 0, 0));
         pollCount = pollCount + 1;
         pollID = pollCount;
     }
@@ -63,7 +61,8 @@ contract BlockSurvey{
         uint256 starttime,
         uint256 timelimit,
         uint256 answerLimit,
-        uint256 questionCount
+        uint256 questionCount,
+        uint256 answerCount
         //Question questionSheet
         //AnswerSheet[] answerSheet
     ){
@@ -72,31 +71,43 @@ contract BlockSurvey{
         timelimit = pollList[pollID].timelimit;
         answerLimit = pollList[pollID].answerLimit;
         questionCount = pollList[pollID].questionCount;
-        //questionSheet = pollList[pollID].questionSheet;
+        answerCount = pollList[pollID].answerCount;
     }
 
-    function createQuestions(
-        uint256 pollID,
-        uint8 questionCount,
-        string[] questionContent
-        ) public payable returns(bool isSuccessed) {
+    function createQuestions(uint256 pollID, uint8 questionCount, string[] questionContent
+        ) public payable returns(
+            bool isSuccessed
+        ){
 
         pollList[pollID].questionCount = questionCount;
 
         for(uint8 i = 0; i < questionCount; i++){
-            pollList[pollID].questionSheet[i] = questionContent[i];
+            pollList[pollID].questionSheet[i][i] = questionContent[i];
         }
+
+        isSuccessed = true;
     }
 
-    function getQuestions(uint256 pollID, uint8 questionNumber) public view returns(
+    function getQuestion(uint256 pollID, uint8 questionNumber) public view returns(
         string question
-    ){
+        ){
+
         question = pollList[pollID].questionSheet[questionNumber];
     }
 
-    function createAnswer(uint256 answerID) public payable returns(bool result){
-        // answersheet-related functions
+    function createAnswer(uint256 pollID, string[] answerList) public payable returns(
+            bool result, 
+            uint answerID
+        ){
+
         address sender = msg.sender;
         result = true;
+    }
+    
+    function getAnswer(uint256 pollID, uint8 answerNumber) public view returns(
+        string question
+        ){
+
+        question = pollList[pollID].answerSheet[answerID].;
     }
 }
