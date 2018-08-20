@@ -45,22 +45,11 @@ contract BlockSurvey{
 
     function createPoll(
         uint256 answerLimit,
-        uint256 timeLimit, 
-        uint256 questionCount
+        uint256 timeLimit
         ) public payable returns(uint256 pollID) {
-        pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, questionCount));
+        pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, 0));
         pollCount = pollCount + 1;
         pollID = pollCount;
-    }
-
-    function addQuestions(
-        uint256 pollID,
-        uint8 questionCount,
-        string[] questionContent
-        ) public payable returns(bool isSuccessed) {
-        for(uint8 i = 0; i < questionCount; i++){
-            pollList[pollID].questionSheet[i] = questionContent[i];
-        }
     }
 
     function joinPoll(uint256 pollID) public payable returns(uint256 receipt){
@@ -84,6 +73,29 @@ contract BlockSurvey{
         answerLimit = pollList[pollID].answerLimit;
         questionCount = pollList[pollID].questionCount;
         //questionSheet = pollList[pollID].questionSheet;
+    }
+
+    function createQuestions(
+        uint256 pollID,
+        uint8 questionCount,
+        string[] questionContent
+        ) public payable returns(bool isSuccessed) {
+
+        pollList[pollID].questionCount = questionCount;
+
+        for(uint8 i = 0; i < questionCount; i++){
+            pollList[pollID].questionSheet[i] = questionContent[i];
+        }
+    }
+
+    function getQuestions(uint256 pollID) public view returns(
+        string[] questions
+    ){
+        string[] tmpQuestions;
+        for(uint8 i = 0; i < pollList[pollID].questionCount; i++){
+            tmpQuestions.push(pollList[pollID].questionSheet[i]);
+        }
+        questions = tmpQuestions;
     }
 
     function createAnswer(uint256 answerID) public payable returns(bool result){
