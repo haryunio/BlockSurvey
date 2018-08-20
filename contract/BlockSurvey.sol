@@ -95,8 +95,10 @@ contract BlockSurvey{
         question = pollList[pollID].questionSheet[questionNumber];
     }
 
+
+    // to-do : answer processing logic - get answerData, return answerID, etc...
     function createAnswer(uint256 pollID, string[] answerList) public payable returns(
-            bool result, 
+            bool result,
             uint answerID
         ){
 
