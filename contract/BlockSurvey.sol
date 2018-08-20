@@ -4,25 +4,13 @@ pragma experimental ABIEncoderV2;
 contract BlockSurvey{
 
     // Answer Part
-    struct Answer{                 // 개별 질문에 대한 답변
-        uint8 answerIndex;
-        string answerData;
-    }
-    struct AnswerSheet{            // 설문에 대한 답변 모음
-        uint256 sheetID;
-        UserData userdata;
-        mapping (uint256 => Answer) answers;
-    }
-
-    // Question Part
-    struct Question{                // 질문
-        uint8 questionType;         // 선택형 = 1, 체크형 = 2, 서술형 = 3
-        string questionContent;
-        string[] choices;
+    struct Answer{                // 개별 질문에 대한 답변
+        uint8 answerIndex;        // answer index
+        string answerContent;     // answer content (JSON type)
     }
 
     // Poll Part
-    struct Poll{                    // 설문(Poll 작업분)
+    struct Poll{                  // 설문(Poll 작업분)
         address creator;
         uint256 pollID;
         uint256 starttime;
@@ -30,8 +18,8 @@ contract BlockSurvey{
         uint256 answerLimit;
         uint256 questionCount;
 
-        mapping (uint8 => Question) questionSheet;
-        mapping (uint8 => AnswerSheet) answerSheet;
+        mapping (uint8 => string) questionSheet;                  // String 기반 단일 Mapping으로 질문 json 저장하기
+        mapping (uint8 => mapping (uint8 => Answer)) answerSheet; // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, 다시 uint8로 개별 응답 정보 찾아내기
     }
 
     // User Part
@@ -58,16 +46,21 @@ contract BlockSurvey{
     function createPoll(
         uint256 answerLimit,
         uint256 timeLimit, 
-        uint256 questionCount, 
-        uint8[] questionType, 
-        string[] questionContent,
-        string[][] choices
+        uint256 questionCount
         ) public payable returns(uint256 pollID) {
-        Question[] tempQuestion;
-        for(uint256 i = 0; i<questionCount; i++){
-            tempQuestion.push(Question(questionType[i], questionContent[i], choices[i]));
-        }
         pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, questionCount));
+        pollCount = pollCount + 1;
+        pollID = pollCount;
+    }
+
+    function addQuestions(
+        uint256 pollID,
+        uint8 questionCount,
+        string[] questionContent
+        ) public payable returns(bool isSuccessed) {
+        for(uint8 i = 0; i < questionCount; i++){
+            pollList[pollID].questionSheet[i] = questionContent[i];
+        }
     }
 
     function joinPoll(uint256 pollID) public payable returns(uint256 receipt){
