@@ -19,8 +19,8 @@ contract BlockSurvey{
         uint256 questionCount;
         uint8 answerCount;      // 답변 개수
 
-        mapping (uint8 => string[]) questionSheet;                  // String 기반 단일 Mapping으로 질문 json 저장하기
-        mapping (uint8 => string[]) answerSheet; // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, 다시 uint8로 개별 응답 정보 찾아내기
+        mapping (uint8 => string) questionSheet;  // String 기반 단일 Mapping으로 질문 json 저장하기
+        mapping (uint8 => string[]) answerSheet;    // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, string array 내에 응답 정보 저장
     }
 
     // User Part
@@ -82,7 +82,7 @@ contract BlockSurvey{
         pollList[pollID].questionCount = questionCount;
 
         for(uint8 i = 0; i < questionCount; i++){
-            pollList[pollID].questionSheet[i][i] = questionContent[i];  //fixing these...
+            pollList[pollID].questionSheet[i] = questionContent[i];  //fixing these...
         }
 
         isSuccessed = true;
@@ -91,7 +91,6 @@ contract BlockSurvey{
     function getQuestion(uint256 pollID, uint8 questionNumber) public view returns(
         string question
         ){
-
         question = pollList[pollID].questionSheet[questionNumber];
     }
 
@@ -102,16 +101,17 @@ contract BlockSurvey{
             uint answerID
         ){
         if(pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Answer Limit");
-        address sender = msg.sender;
-        result = true;
+        // sender logging logic needed
         pollList[pollID].answerSheet[pollList[pollID].answerCount] = answerList;
-        answerID = pollList[pollID].answerCount++;
+        answerID = pollList[pollID].answerCount;
+
+        pollList[pollID].answerCount = pollList[pollID].answerCount + 1;
+        result = true;
     }
     
-    function getAnswer(uint256 pollID, uint answerID) public view returns(
+    function getAnswer(uint256 pollID, uint8 answerID) public view returns(
         string[] question
         ){
-
         question = pollList[pollID].answerSheet[answerID];
     }
 }
