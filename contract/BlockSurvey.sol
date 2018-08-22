@@ -53,6 +53,9 @@ contract BlockSurvey{
     function joinPoll(uint256 pollID) public payable returns(uint256 receipt){
         uint256 tmp = pollID;
         tmp++;
+
+        // poll joining logic needed
+
         receipt = 1;
     }
 
@@ -63,8 +66,6 @@ contract BlockSurvey{
         uint256 answerLimit,
         uint256 questionCount,
         uint256 answerCount
-        //Question questionSheet
-        //AnswerSheet[] answerSheet
     ){
         creator = pollList[pollID].creator;
         starttime = pollList[pollID].starttime;
@@ -78,13 +79,8 @@ contract BlockSurvey{
         ) public payable returns(
             bool isSuccessed
         ){
-
         pollList[pollID].questionCount = questionCount;
-
-        for(uint8 i = 0; i < questionCount; i++){
-            pollList[pollID].questionSheet[i] = questionContent[i];  //fixing these...
-        }
-
+        for(uint8 i = 0; i < questionCount; i++) pollList[pollID].questionSheet[i] = questionContent[i];
         isSuccessed = true;
     }
 
