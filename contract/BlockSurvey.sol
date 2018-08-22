@@ -101,9 +101,11 @@ contract BlockSurvey{
             bool result,
             uint answerID
         ){
-
+        if(pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert();
         address sender = msg.sender;
         result = true;
+        pollList[pollID].answerSheet[answerCount] = answerList;
+        answerID = pollList[pollID].answerCount++;
     }
     
     function getAnswer(uint256 pollID, uint8 answerNumber) public view returns(
