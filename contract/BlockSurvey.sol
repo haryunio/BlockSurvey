@@ -17,10 +17,10 @@ contract BlockSurvey{
         uint256 timelimit;
         uint256 answerLimit;
         uint256 questionCount;
-        uint256 answerCount;      // 답변 개수
+        uint8 answerCount;      // 답변 개수
 
         mapping (uint8 => string[]) questionSheet;                  // String 기반 단일 Mapping으로 질문 json 저장하기
-        mapping (uint8 => mapping (uint8 => string[])) answerSheet; // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, 다시 uint8로 개별 응답 정보 찾아내기
+        mapping (uint8 => string[]) answerSheet; // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, 다시 uint8로 개별 응답 정보 찾아내기
     }
 
     // User Part
@@ -101,17 +101,17 @@ contract BlockSurvey{
             bool result,
             uint answerID
         ){
-        if(pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert();
+        if(pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Answer Limit");
         address sender = msg.sender;
         result = true;
-        pollList[pollID].answerSheet[answerCount] = answerList;
+        pollList[pollID].answerSheet[pollList[pollID].answerCount] = answerList;
         answerID = pollList[pollID].answerCount++;
     }
     
-    function getAnswer(uint256 pollID, uint8 answerNumber) public view returns(
-        string question
+    function getAnswer(uint256 pollID, uint answerID) public view returns(
+        string[] question
         ){
 
-        question = pollList[pollID].answerSheet[answerID].;
+        question = pollList[pollID].answerSheet[answerID];
     }
 }
