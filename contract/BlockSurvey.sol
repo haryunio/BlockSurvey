@@ -94,6 +94,7 @@ contract BlockSurvey{
             uint answerID
         ){
         if(pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Answer Limit");
+        // logger needed?
         // sender logging logic needed
         pollList[pollID].answerSheet[pollList[pollID].answerCount] = answerList;
         answerID = pollList[pollID].answerCount;
