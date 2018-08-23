@@ -90,8 +90,6 @@ contract BlockSurvey{
         // returns correct question data
     }
 
-
-    // to-do : answer processing logic - get answerData, return answerID, etc...
     function createAnswer(uint256 pollID, string[] answerList) public payable returns(
             bool result,
             uint answerID
@@ -103,6 +101,8 @@ contract BlockSurvey{
 
         pollList[pollID].answerCount = pollList[pollID].answerCount + 1;
         result = true;
+
+        // answer JSON datatype definition
     }
     
     function getAnswer(uint256 pollID, uint8 answerID) public view returns(
