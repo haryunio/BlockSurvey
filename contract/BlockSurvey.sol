@@ -24,7 +24,6 @@ contract BlockSurvey{
     }
 
     // User Part
-
     struct UserData{
         address userAddress;   // 사용자 지갑 주소
         uint256 userID;        // 내부 처리용 ID, 보안성과 익명성 강화용
@@ -43,7 +42,6 @@ contract BlockSurvey{
     }
 
     // to-do: solidity fix needed to fix all of the struct-type sources.
-
     function createPoll(uint256 answerLimit, uint256 timeLimit) public payable returns(uint256 pollID) {
         pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, 0, 0));
         pollCount = pollCount + 1;
@@ -60,6 +58,7 @@ contract BlockSurvey{
     }
 
     function getPoll(uint256 pollID) public view returns(
+        // poll data struct type return needed. find it.
         address creator,
         uint256 starttime,
         uint256 timelimit,
