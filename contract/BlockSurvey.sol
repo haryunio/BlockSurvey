@@ -3,8 +3,6 @@ pragma experimental ABIEncoderV2;
 
 contract BlockSurvey{
 
-    
-
     // Answer Part
     struct Answer{                // 개별 질문에 대한 답변
         uint8 answerIndex;        // answer index
