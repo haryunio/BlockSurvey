@@ -87,7 +87,6 @@ contract BlockSurvey{
         string question
         ){
         question = pollList[pollID].questionSheet[questionNumber];
-        // returns correct question data
     }
 
     function createAnswer(uint256 pollID, string[] answerList) public payable returns(
