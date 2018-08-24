@@ -87,7 +87,7 @@ contract BlockSurvey{
         string question
         ){
         question = pollList[pollID].questionSheet[questionNumber];
-        // 
+        // Question need to be fixed for JSON support
     }
 
     function createAnswer(uint256 pollID, string[] answerList) public payable returns(
