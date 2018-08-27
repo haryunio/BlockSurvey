@@ -60,7 +60,6 @@ contract BlockSurvey{
     }
 
     function getPoll(uint256 pollID) public view returns(
-        // poll data struct type return needed. find it.
         address creator,
         uint256 starttime,
         uint256 timelimit,
