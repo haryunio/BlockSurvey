@@ -3,7 +3,23 @@ pragma experimental ABIEncoderV2;
 
 contract BlockSurvey{
 
+    event createdPoll(address creater, uint256 pollid);
     event JoinedPoll(address user, uint256 pollid, uint256 time);
+    event createdAnswer(address user, uint256 pollid, uint256 answerid);
+
+    modifier pollJoinLimitReached(uint pollID) {
+        if (transactions[transactionId].destination == 0) revert("Poll join limit reached!");
+        _;
+    }
+    
+    modifier pollTimeoutReached(uint pollID) {
+        if (transactions[transactionId].destination == 0) revert("Poll join limit reached!");
+        _;
+    }
+    modifier pollStillAlive(uint pollID) {
+        if (transactions[transactionId].destination == 0) revert("Poll join limit reached!");
+        _;
+    }
 
     // Answer Part
     struct Answer{                // 개별 질문에 대한 답변
@@ -47,6 +63,7 @@ contract BlockSurvey{
     function createPoll(uint256 answerLimit, uint256 timeLimit) public payable returns(uint256 pollID) {
         pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, 0, 0));
         pollCount = pollCount + 1;
+        
         pollID = pollCount;
     }
 
