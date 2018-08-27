@@ -44,7 +44,7 @@ contract BlockSurvey{
         _;
     }
     modifier pollTimeoutReached(uint pollID) {
-        if (pollList[pollID].endTime >= block.timestamp) revert("Poll timeout reached!");
+        if (pollList[pollID].endTime < block.timestamp) revert("Poll timeout reached!");
         _;
     }
     modifier pollStillAlive(uint pollID) {
