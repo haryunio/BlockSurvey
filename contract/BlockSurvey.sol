@@ -163,8 +163,7 @@ contract BlockSurvey{
         pollJoinLimitReached(pollID)
         pollTimeoutReached(pollID)
         pollStillAlive(pollID)
-        pollJoined(pollID)
-
+        
         returns(bool result, uint answerID)
     {
         pollList[pollID].participant[msg.sender] = answerID;
