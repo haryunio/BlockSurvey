@@ -3,6 +3,8 @@ pragma experimental ABIEncoderV2;
 
 contract BlockSurvey{
 
+    event JoinedPoll(address user, uint256 pollid, uint256 time);
+
     // Answer Part
     struct Answer{                // 개별 질문에 대한 답변
         uint8 answerIndex;        // answer index
@@ -111,4 +113,10 @@ contract BlockSurvey{
         ){
         question = pollList[pollID].answerSheet[answerID];
     }
+
+    /*
+    function verify() public view returns(bool isVerified){
+
+    }
+    */
 }
