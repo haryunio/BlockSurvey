@@ -13,11 +13,11 @@ contract BlockSurvey{
     }
     
     modifier pollTimeoutReached(uint pollID) {
-        if (transactions[transactionId].destination == 0) revert("Poll join limit reached!");
+        if (transactions[transactionId].destination == 0) revert("Poll timeout reached!");
         _;
     }
     modifier pollStillAlive(uint pollID) {
-        if (transactions[transactionId].destination == 0) revert("Poll join limit reached!");
+        if (transactions[transactionId].destination == 0) revert("Poll is not alive!");
         _;
     }
 
@@ -28,17 +28,24 @@ contract BlockSurvey{
     }
 
     // Poll Part
-    struct Poll{                  // 설문(Poll 작업분)
+    struct Poll{
         address creator;
+        address[] participant;
+        
+        string questionSheet;
+        string[] answerSheet;
+
         uint256 pollID;
+
         uint256 starttime;
+        
         uint256 timelimit;
         uint256 answerLimit;
+        
         uint256 questionCount;
-        uint8 answerCount;      // 답변 개수
+        uint256 answerCount;
 
-        mapping (uint8 => string) questionSheet;  // String 기반 단일 Mapping으로 질문 json 저장하기
-        mapping (uint8 => string[]) answerSheet;    // 2중 mapping 사용. uint8로 답지 매핑 찾아가고, string array 내에 응답 정보 저장
+        bool isFinished;
     }
 
     // User Part
@@ -48,23 +55,16 @@ contract BlockSurvey{
         uint256 userScore;     // 사용자 평점 (잘못된 응답 등 피드백)
     }
 
-    // mapping (uint256 => Poll) private pollList;  // 모든 설문조사 목록
-    Poll[] pollList;
+    mapping (uint256 => Poll) private pollList;     // 모든 설문조사 목록
     mapping (address => UserData) private userData; // 내부 처리용 사용자 정보
     
     // Main Logic Part
-    uint256 private pollCount;
-
-    constructor() public {
-        pollCount = 0;
-    }
+    uint256 private pollCount = 0;
 
     // to-do: solidity fix needed to fix all of the struct-type sources.
     function createPoll(uint256 answerLimit, uint256 timeLimit) public payable returns(uint256 pollID) {
         pollList.push(Poll(msg.sender, pollCount, block.timestamp, timeLimit, answerLimit, 0, 0));
-        pollCount = pollCount + 1;
-        
-        pollID = pollCount;
+        pollID = pollCount++;
     }
 
     function joinPoll(uint256 pollID) public payable returns(uint256 receipt){

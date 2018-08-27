@@ -4,11 +4,11 @@ interface tokenRecipient { function receiveApproval(address _from, uint256 _valu
 
 contract SurveyToken {
     // Public variables of the token
-    string public name;
-    string public symbol;
+    string public name = "SurveyToken";
+    string public symbol = "SVT";
     uint8 public decimals = 18;
     // 18 decimals is the strongly suggested default, avoid changing it
-    uint256 public totalSupply;
+    uint256 public totalSupply = 100000000000000000000000000000;
 
     // This creates an array with all balances
     mapping (address => uint256) public balanceOf;
@@ -28,18 +28,11 @@ contract SurveyToken {
      *
      * Initializes contract with initial supply tokens to the creator of the contract
      */
-    function TokenERC20(
-        uint256 initialSupply,
-        string tokenName,
-        string tokenSymbol
-    ) public {
-        totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
+    constructor() public {
         balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
     }
 
-    /** 
+    /**
      * Internal transfer, only can be called by this contract
      */
     function _transfer(address _from, address _to, uint _value) internal {
