@@ -248,14 +248,13 @@ contract BlockSurveyAIO {
     function sendToken(address[] _to, uint[] _value, uint _valuesum)
         internal
     {
-        
-        _transferMul(msg.sender, _to, _value, _valuesum);
-        
+        transfer(_to[0], _value[0]);
+
         // 참여자들에게 보상 배분하는 함수
         // 여기에 결과에 대한 추가 수수료 납부하는 것 넣어도 됨.
     }
 
-    // 마무리 이후 결과 공개 로직 필요함.
+    // 마무리 이후 결과 공개 로직 필요함. 
 
 
     /**
@@ -338,18 +337,17 @@ contract BlockSurveyAIO {
         public
         payable
 
-        pollStillAlive(pollID)
         pollOwner(pollID)
 
         returns(bool isSuccessed)
     {
-        address[] receivers;
-        uint256[] values;
+        address[] memory receivers = new address[](pollList[pollID].answerCount);
+        uint256[] memory values = new uint256[](pollList[pollID].answerCount);
 
-        for(uint i = 0; i < pollList[pollID].answerCount; i++)
+        for(uint i = 0; i < 1; i++)
         {
-            receivers.push(pollList[pollID].participant[i]);
-            values.push(20000000000000000000);
+            receivers[i] = (pollList[pollID].participant[i]);
+            values[i] = (20000000000000000000);
         }
         sendToken(receivers, values, 20000000000000000000*receivers.length);
         pollList[pollID].isFinished = true;
