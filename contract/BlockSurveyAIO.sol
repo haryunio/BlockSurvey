@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; }
 
-contract SurveyToken {
+contract BlockSurveyAIO {
     // Public variables of the token
     string public name = "SurveyToken";
     string public symbol = "SVT";
@@ -149,9 +149,6 @@ contract SurveyToken {
         emit Burn(_from, _value);
         return true;
     }
-}
-
-contract BlockSurvey{
 
     event createdPoll(address creater, uint256 pollid);
     event JoinedPoll(address user, uint256 pollid, uint256 time);
@@ -190,8 +187,6 @@ contract BlockSurvey{
     uint256 private pollCount = 0;
     uint256 private userCount = 0;
 
-    SurveyToken svt = SurveyToken(0xa80aded81471f756de195480f286aa216a09a0c8);
-
     modifier pollJoinLimitReached(uint pollID) {
         if (pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Poll join limit reached!");
         _;
@@ -221,6 +216,11 @@ contract BlockSurvey{
         _;
     }
 
+    modifier userNotJoined(address userAddress) {
+        if(!(userList[userAddress].userID < 0)) revert("User arleady joined!");
+        _;
+    }
+
     modifier adminOnly() {
         // if (msg.sender != admin) revert("not admin");
         if (msg.sender != msg.sender) revert("User is not admin!");
@@ -240,16 +240,16 @@ contract BlockSurvey{
     function depositToken(uint _value)
         internal
     {
-        svt.transferFrom(msg.sender, 0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
+        transfer(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
     }
 
     function sendToken(address[] _to, uint[] _value, uint _valuesum)
         internal
     {
-        svt.transferFrom(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, msg.sender, _valuesum);
+        transferFrom(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, msg.sender, _valuesum);
 
         for(uint i = 0; i < _to.length; i++) {
-            svt.transferFrom(msg.sender, _to[i], _value[i]);
+            transfer(_to[i], _value[i]);
         }
     }
 
@@ -265,7 +265,7 @@ contract BlockSurvey{
     function addUser()
         public
 
-        userJoined(msg.sender) // 사용자 인증 시스템과 연동 고려해야 함. 실명인증 플래그 방식이 좋을 듯.
+        userNotJoined(msg.sender) // 사용자 인증 시스템과 연동 고려해야 함. 실명인증 플래그 방식이 좋을 듯.
 
         returns(bool isSuccessed, uint256 userID)
     {
