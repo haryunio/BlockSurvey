@@ -233,7 +233,6 @@ contract BlockSurveyAIO {
     * Token part
     * - in this part, can connect to SurveyToken contract which is arleady deployed
     * - can be used in payment progress
-    * - token addr : 0xa80aded81471f756de195480f286aa216a09a0c8
     * - contr addr : 0xd3dac111b5f4340453cbfa45b0bd0de6de135379
     */
 
