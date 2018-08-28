@@ -83,22 +83,6 @@ contract SurveyToken {
         return true;
     }
 
-    function multiTransferFrom(address _from, address[] _to, uint256[] _value) public returns (bool success) {
-        uint256 sum;
-        for(uint i = 0; i < _to.length; i++) {
-            sum += _value[i];
-        }
-        
-        require(sum <= allowance[_from][msg.sender]);     // Check allowance
-        allowance[_from][msg.sender] -= sum;
-
-        for(i = 0; i < _to.length; i++) {
-            _transfer(_from, _to[i], _value[i]);
-        }
-        
-        return true;
-    }
-
     /**
      * Set allowance for other address
      *
@@ -206,8 +190,7 @@ contract BlockSurvey{
     uint256 private pollCount = 0;
     uint256 private userCount = 0;
 
-    SurveyToken svt = SurveyToken(0xEF1F53c07a345Cc120531853Ed8A07399c5dC773);
-
+    SurveyToken svt = SurveyToken(0xa80aded81471f756de195480f286aa216a09a0c8);
 
     modifier pollJoinLimitReached(uint pollID) {
         if (pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Poll join limit reached!");
@@ -250,19 +233,29 @@ contract BlockSurvey{
     * Token part
     * - in this part, can connect to SurveyToken contract which is arleady deployed
     * - can be used in payment progress
+    * - token addr : 0xa80aded81471f756de195480f286aa216a09a0c8
+    * - contr addr : 0xd3dac111b5f4340453cbfa45b0bd0de6de135379
     */
 
-    function depositToken(address _from, uint _value)
+    function depositToken(uint _value)
         internal
     {
-        svt.transferFrom(_from, 0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
+        svt.approve(msg.sender, _value);
+        svt.transferFrom(msg.sender, 0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
     }
 
-    function sendToken(address[] _to, uint[] _value)
+    function sendToken(address[] _to, uint[] _value, uint _valuesum)
         internal
     {
-        svt.multiTransferFrom(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _to, _value);
+        svt.transferFrom(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, msg.sender, _valuesum);
+
+        for(uint i = 0; i < _to.length; i++) {
+            svt.approve(_to[i], _value[i]);
+            svt.transferFrom(msg.sender, _to[i], _value[i]);
+        }
     }
+
+    // 마무리 이후 결과 공개 로직 필요함.
 
 
     /**
@@ -311,7 +304,7 @@ contract BlockSurvey{
         returns(uint256 pollID) 
     {
         //Poll(msg.sender, pollCount, block.timestamp, (block.timestamp + timeLimit), answerLimit, 0, false, questionSheet);
-        depositToken(msg.sender, fee);
+        depositToken(fee);
 
         pollList[pollCount] = (Poll(msg.sender, pollCount, block.timestamp, (block.timestamp + timeLimit), answerLimit, 0, false, questionSheet, fee));
         pollID = pollCount++;
@@ -327,6 +320,8 @@ contract BlockSurvey{
         uint256 answerLimit,
         uint256 questionCount,
         uint256 answerCount,
+        uint256 deposit,
+        bool isFinished,
         string questionSheet
         )
     {
@@ -335,12 +330,13 @@ contract BlockSurvey{
         endTime = pollList[pollID].endTime;
         answerLimit = pollList[pollID].answerLimit;
         answerCount = pollList[pollID].answerCount;
+        deposit = pollList[pollID].deposit;
+        isFinished = pollList[pollID].isFinished;
         questionSheet = pollList[pollID].questionSheet;
     }
 
     function finishPoll(uint256 pollID)
         public
-        view
 
         pollStillAlive(pollID)
         pollOwner(pollID)
@@ -355,7 +351,7 @@ contract BlockSurvey{
             receivers.push(pollList[pollID].participant[i]);
             values.push(pollList[pollID].deposit / pollList[pollID].answerCount);
         }
-        sendToken(receivers, values);
+        sendToken(receivers, values, pollList[pollID].deposit);
         pollList[pollID].isFinished = true;
     }
 

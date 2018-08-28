@@ -82,22 +82,6 @@ contract SurveyToken {
         return true;
     }
 
-    function multiTransferFrom(address _from, address[] _to, uint256[] _value) public returns (bool success) {
-        uint256 sum;
-        for(uint i = 0; i < _to.length; i++) {
-            sum += _value[i];
-        }
-        
-        require(sum <= allowance[_from][msg.sender]);     // Check allowance
-        allowance[_from][msg.sender] -= sum;
-
-        for(i = 0; i < _to.length; i++) {
-            _transfer(_from, _to[i], _value[i]);
-        }
-        
-        return true;
-    }
-
     /**
      * Set allowance for other address
      *
