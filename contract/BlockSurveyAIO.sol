@@ -242,6 +242,7 @@ contract BlockSurveyAIO {
     {
         transfer(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
     }
+    
 
     function sendToken(address[] _to, uint[] _value, uint _valuesum)
         internal
