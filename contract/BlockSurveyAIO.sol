@@ -212,12 +212,12 @@ contract BlockSurveyAIO {
     }
 
     modifier userJoined(address userAddress) {
-        if(userList[userAddress].userID < 0) revert("User not joined!");
+        if(!(userList[userAddress].userID < 0)) revert("User arleady joined!");
         _;
     }
 
     modifier userNotJoined(address userAddress) {
-        if(!(userList[userAddress].userID < 0)) revert("User arleady joined!");
+        if(userList[userAddress].userID < 0) revert("User not joined!");
         _;
     }
 
@@ -241,17 +241,18 @@ contract BlockSurveyAIO {
         internal
     {
         transfer(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
+        // 수수료를 재단에 내는 함수, 전체 보상량의 1/1000
     }
-    
+
 
     function sendToken(address[] _to, uint[] _value, uint _valuesum)
         internal
     {
-        transferFrom(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, msg.sender, _valuesum);
-
-        for(uint i = 0; i < _to.length; i++) {
-            transfer(_to[i], _value[i]);
-        }
+        
+        _transferMul(msg.sender, _to, _value, _valuesum);
+        
+        // 참여자들에게 보상 배분하는 함수
+        // 여기에 결과에 대한 추가 수수료 납부하는 것 넣어도 됨.
     }
 
     // 마무리 이후 결과 공개 로직 필요함.
@@ -288,8 +289,6 @@ contract BlockSurveyAIO {
         isSuccessed = true;
     }
 
-
-
     /**
     * Poll part
     * - in this part, I've added few functions for poll creating, getting poll & question.
@@ -297,6 +296,7 @@ contract BlockSurveyAIO {
     * - joining logic is merged to createAnswer method
     */
 
+    // fee는 전체 지불할 양의 1/100 (1%)로 요청해야 함.
     function createPoll(uint256 answerLimit, uint256 timeLimit, string questionSheet, uint256 fee)
         public
         payable
@@ -313,7 +313,7 @@ contract BlockSurveyAIO {
         public
         view
         returns(
-        address creator,
+        address creator, 
         uint256 starttime,
         uint256 endTime,
         uint256 answerLimit,
@@ -336,6 +336,7 @@ contract BlockSurveyAIO {
 
     function finishPoll(uint256 pollID)
         public
+        payable
 
         pollStillAlive(pollID)
         pollOwner(pollID)
@@ -348,9 +349,9 @@ contract BlockSurveyAIO {
         for(uint i = 0; i < pollList[pollID].answerCount; i++)
         {
             receivers.push(pollList[pollID].participant[i]);
-            values.push(pollList[pollID].deposit / pollList[pollID].answerCount);
+            values.push(20000000000000000000);
         }
-        sendToken(receivers, values, pollList[pollID].deposit);
+        sendToken(receivers, values, 20000000000000000000*receivers.length);
         pollList[pollID].isFinished = true;
     }
 
