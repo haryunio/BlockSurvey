@@ -245,10 +245,10 @@ contract BlockSurveyAIO {
     }
 
 
-    function sendToken(address[] _to, uint[] _value, uint _valuesum)
+    function sendToken(address[] _to, uint[] _value)
         internal
     {
-        transfer(_to[0], _value[0]);
+        for(uint i = 0; i < _to.length; i++) transfer(_to[i], _value[i]);
 
         // 참여자들에게 보상 배분하는 함수
         // 여기에 결과에 대한 추가 수수료 납부하는 것 넣어도 됨.
@@ -295,7 +295,8 @@ contract BlockSurveyAIO {
     * - joining logic is merged to createAnswer method
     */
 
-    // fee는 전체 지불할 양의 1/100 (1%)로 요청해야 함.
+    // fee는 전체 지불할 양의 1인당 fee로 요청해야 함.
+    // 1인에 해당하는 fee가 기본 플랫폼 이용 수수료로 지불됨.
     function createPoll(uint256 answerLimit, uint256 timeLimit, string questionSheet, uint256 fee)
         public
         payable
@@ -344,12 +345,12 @@ contract BlockSurveyAIO {
         address[] memory receivers = new address[](pollList[pollID].answerCount);
         uint256[] memory values = new uint256[](pollList[pollID].answerCount);
 
-        for(uint i = 0; i < 1; i++)
+        for(uint i = 0; i < pollList[pollID].answerCount; i++)
         {
             receivers[i] = (pollList[pollID].participant[i]);
-            values[i] = (20000000000000000000);
+            values[i] = (pollList[pollID].deposit);
         }
-        sendToken(receivers, values, 20000000000000000000*receivers.length);
+        sendToken(receivers, values);
         pollList[pollID].isFinished = true;
     }
 
