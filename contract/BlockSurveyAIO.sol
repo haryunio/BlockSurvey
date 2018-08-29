@@ -29,7 +29,7 @@ contract BlockSurveyAIO {
         _;
     }
     modifier pollTimeoutReached(uint pollID) {
-        if (pollList[pollID].endTime < block.timestamp) revert("Poll timeout reached!");
+        if (pollList[pollID].endTime < now) revert("Poll timeout reached!");
         _;
     }
     modifier pollStillAlive(uint pollID) {
@@ -242,7 +242,10 @@ contract BlockSurveyAIO {
         //Poll(msg.sender, pollCount, block.timestamp, (block.timestamp + timeLimit), answerLimit, 0, false, questionSheet);
         depositToken(fee);
 
-        pollList[pollCount] = (Poll(msg.sender, pollCount, block.timestamp, (block.timestamp + timeLimit), answerLimit, 0, false, questionSheet, fee));
+        uint256 time = now;
+        uint256 endTime = time + timeLimit;
+
+        pollList[pollCount] = (Poll(msg.sender, pollCount, time, endTime, answerLimit, 0, false, questionSheet, fee));
         pollID = pollCount++;
     }
 
