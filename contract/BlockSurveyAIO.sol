@@ -250,7 +250,7 @@ contract BlockSurveyAIO {
         pollList[pollCount] = (Poll(msg.sender, pollCount, time, endTime, answerLimit, 0, false, questionSheet, fee));
         pollID = pollCount++;
     }
-
+ 
     function getPoll(uint256 pollID)
         public
         view
