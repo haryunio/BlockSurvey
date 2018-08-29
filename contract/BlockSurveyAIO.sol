@@ -17,13 +17,57 @@ contract BlockSurveyAIO {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
     event Burn(address indexed from, uint256 value);
+
     // blocksurvey event
     event createdPoll(address creater, uint256 pollid);
     event JoinedPoll(address user, uint256 pollid, uint256 time);
     event createdAnswer(address user, uint256 pollid, uint256 answerid);
 
+    // blocksurvey modifier
+    modifier pollJoinLimitReached(uint pollID) {
+        if (pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Poll join limit reached!");
+        _;
+    }
+    modifier pollTimeoutReached(uint pollID) {
+        if (pollList[pollID].endTime < block.timestamp) revert("Poll timeout reached!");
+        _;
+    }
+    modifier pollStillAlive(uint pollID) {
+        if (pollList[pollID].isFinished) revert("Poll is not alive!");
+        _;
+    }
+    modifier pollJoined(uint pollID, address userAddress) {
+        for(uint i = 0; i < pollList[pollID].answerCount; i++) {
+            if (pollList[pollID].participant[i] == userAddress) _;
+        }
+        revert("User not joined!");
+    }
+    modifier pollOwner(uint pollID) {
+        if (pollList[pollID].creator != msg.sender) revert("Not owner!");
+        _;
+    }
+
+    modifier userJoined(address userAddress) {
+        if(!(userList[userAddress].userID < 0)) revert("User arleady joined!");
+        _;
+    }
+
+    modifier userNotJoined(address userAddress) {
+        if(userList[userAddress].userID < 0) revert("User not joined!");
+        _;
+    }
+
+    modifier adminOnly() {
+        // if (msg.sender != admin) revert("not admin");
+        if (msg.sender != msg.sender) revert("User is not admin!");
+        _;
+    }
+
+    
+    // ERC20 logic part. whole contract constructors are here.
+
     constructor() public {
-        balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
+        balanceOf[msg.sender] = totalSupply;
     }
 
     function _transfer(address _from, address _to, uint _value) internal {
@@ -84,7 +128,12 @@ contract BlockSurveyAIO {
         return true;
     }
 
-    
+    /**
+    *  Blocksurvey part
+    *  events & modifiers are written at top.
+    *  check older logs to find out ERC20 remarks.
+    *  SweetLab GAZUA!!!!!!!!!
+    */
 
     struct Poll{
         address creator; 
@@ -117,46 +166,6 @@ contract BlockSurveyAIO {
     // Main Logic Part
     uint256 private pollCount = 0;
     uint256 private userCount = 0;
-
-    modifier pollJoinLimitReached(uint pollID) {
-        if (pollList[pollID].answerCount >= pollList[pollID].answerLimit) revert("Poll join limit reached!");
-        _;
-    }
-    modifier pollTimeoutReached(uint pollID) {
-        if (pollList[pollID].endTime < block.timestamp) revert("Poll timeout reached!");
-        _;
-    }
-    modifier pollStillAlive(uint pollID) {
-        if (pollList[pollID].isFinished) revert("Poll is not alive!");
-        _;
-    }
-    modifier pollJoined(uint pollID, address userAddress) {
-        for(uint i = 0; i < pollList[pollID].answerCount; i++)
-        {
-            if (pollList[pollID].participant[i] == userAddress) _;
-        }
-        revert("User not joined!");
-    }
-    modifier pollOwner(uint pollID) {
-        if (pollList[pollID].creator != msg.sender) revert("Not owner!");
-        _;
-    }
-
-    modifier userJoined(address userAddress) {
-        if(!(userList[userAddress].userID < 0)) revert("User arleady joined!");
-        _;
-    }
-
-    modifier userNotJoined(address userAddress) {
-        if(userList[userAddress].userID < 0) revert("User not joined!");
-        _;
-    }
-
-    modifier adminOnly() {
-        // if (msg.sender != admin) revert("not admin");
-        if (msg.sender != msg.sender) revert("User is not admin!");
-        _;
-    }
 
     /**
     * Token part
