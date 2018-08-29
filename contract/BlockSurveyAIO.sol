@@ -1,5 +1,4 @@
 pragma solidity ^0.4.23;
-pragma experimental ABIEncoderV2;
 
 interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external; }
 
@@ -71,9 +70,9 @@ contract BlockSurveyAIO {
     }
 
     function _transfer(address _from, address _to, uint _value) internal {
-        require(_to != 0x0);
-        require(balanceOf[_from] >= _value);
-        require(balanceOf[_to] + _value >= balanceOf[_to]);
+        require(_to != 0x0, "Null address!");
+        require(balanceOf[_from] >= _value, "Not enough balance!");
+        require(balanceOf[_to] + _value >= balanceOf[_to], "Receiver balance overflow!");
         uint previousBalances = balanceOf[_from] + balanceOf[_to];
         balanceOf[_from] -= _value;
         balanceOf[_to] += _value;
@@ -87,7 +86,7 @@ contract BlockSurveyAIO {
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        require(_value <= allowance[_from][msg.sender]);     // Check allowance
+        require(_value <= allowance[_from][msg.sender], "not allowed!");     // Check allowance
         allowance[_from][msg.sender] -= _value;
         _transfer(_from, _to, _value);
         return true;
@@ -111,7 +110,7 @@ contract BlockSurveyAIO {
     }
 
     function burn(uint256 _value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
+        require(balanceOf[msg.sender] >= _value, "not enough balance!");   // Check if the sender has enough
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         emit Burn(msg.sender, _value);
@@ -119,8 +118,8 @@ contract BlockSurveyAIO {
     }
 
     function burnFrom(address _from, uint256 _value) public returns (bool success) {
-        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
-        require(_value <= allowance[_from][msg.sender]);    // Check allowance
+        require(balanceOf[_from] >= _value, "not enough value!");                // Check if the targeted balance is enough
+        require(_value <= allowance[_from][msg.sender], "not allowed!");    // Check allowance
         balanceOf[_from] -= _value;                         // Subtract from the targeted balance
         allowance[_from][msg.sender] -= _value;             // Subtract from the sender's allowance
         totalSupply -= _value;                              // Update totalSupply
@@ -177,7 +176,8 @@ contract BlockSurveyAIO {
     function depositToken(uint _value)
         internal
     {
-        transfer(0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757, _value);
+        address foundation = 0x8cad9b4941aafb67b5a5e6dea657db2d4ea7b757;
+        transfer(foundation, _value);
         // 수수료를 재단에 내는 함수, 전체 보상량의 1/1000
     }
 
@@ -257,7 +257,6 @@ contract BlockSurveyAIO {
         uint256 starttime,
         uint256 endTime,
         uint256 answerLimit,
-        uint256 questionCount,
         uint256 answerCount,
         uint256 deposit,
         bool isFinished,
@@ -292,6 +291,7 @@ contract BlockSurveyAIO {
         }
         sendToken(receivers, values);
         pollList[pollID].isFinished = true;
+        isSuccessed = true;
     }
 
     function getQuestion(uint256 pollID)
