@@ -5,6 +5,8 @@ interface tokenRecipient { function receiveApproval(address _from, uint256 _valu
 contract BlockSurveyAIO {
     string public name = "SurveyTokenBeta";
     string public symbol = "SVTb";
+    // string public name = "SurveyToken";
+    // string public symbol = "SVT";
     uint8 public decimals = 18;
     uint256 public totalSupply = 100000000000000000000000000000;
 
