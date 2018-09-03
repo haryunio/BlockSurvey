@@ -133,7 +133,6 @@ contract BlockSurveyAIO {
     *  Blocksurvey part
     *  events & modifiers are written at top.
     *  check older logs to find out ERC20 remarks.
-    *  SweetLab GAZUA!!!!!!!!!
     */
 
     struct Poll{
