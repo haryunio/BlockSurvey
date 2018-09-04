@@ -327,7 +327,6 @@ contract BlockSurveyAIO {
         result = true;
 
         pollList[pollID].answerCount++;
-        // answer JSON datatype definition
     }
 
     function getAnswer(uint256 pollID, uint256 answerID)
