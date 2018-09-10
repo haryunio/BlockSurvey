@@ -299,8 +299,6 @@ contract BlockSurveyAIO {
         // Question need to be fixed for JSON support
     }
 
-
-
     /**
     * answer part
     * - in this part, I've added few functions for user adding, confirming
