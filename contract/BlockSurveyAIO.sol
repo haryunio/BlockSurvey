@@ -190,9 +190,6 @@ contract BlockSurveyAIO {
         // 여기에 결과에 대한 추가 수수료 납부하는 것 넣어도 됨.
     }
 
-    // 마무리 이후 결과 공개 로직 필요함. 
-
-
     /**
     * User part
     * - in this part, I've added few functions for user adding, confirming
